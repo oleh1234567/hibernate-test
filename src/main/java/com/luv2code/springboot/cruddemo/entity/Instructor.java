@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "instructorDetail")
+@ToString(exclude = {"instructorDetail", "courses"})
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,8 @@ public class Instructor {
     @JoinColumn(name = "instructor_detail_id")
     private InstructorDetail instructorDetail;
 
-    @OneToMany(mappedBy = "instructor",
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "instructor",
             cascade = {CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Course> courses;
@@ -42,9 +43,9 @@ public class Instructor {
         this.email = email;
     }
 
-    public void add(Course course){
+    public void add(Course course) {
 
-        if(courses == null){
+        if (courses == null) {
             courses = new ArrayList<>();
         }
 
