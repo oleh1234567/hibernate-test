@@ -8,8 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import org.hibernate.query.Query;
 
-public class EagerLazyDemo {
+
+public class FetchJoinDemo {
 
     public static void main(String[] args) {
 
@@ -28,14 +30,23 @@ public class EagerLazyDemo {
             session.beginTransaction();
 
             int id = 1;
-            Instructor instructor = session.get(Instructor.class, id);
+
+            Query<Instructor> query =
+                    session.createQuery("SELECT i FROM Instructor i "
+                                    + "JOIN FETCH i.courses "
+                                    + "WHERE i.id = :instructorId",
+                            Instructor.class);
+
+            query.setParameter("instructorId", id);
+
+            Instructor instructor = query.getSingleResult();
 
             System.out.println("Oleh: Instructor: " + instructor);
-            System.out.println("Oleh: Courses: " + instructor.getCourses());
-
 
             session.getTransaction().commit();
             session.close();
+
+            System.out.println("Oleh: Courses: " + instructor.getCourses());
 
         }
     }
